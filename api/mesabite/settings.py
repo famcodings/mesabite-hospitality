@@ -41,6 +41,7 @@ INSTALLED_APPS = [
      # Installed Packages
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
 
     # Custom Apps
     'profiles',
