@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
+  srcDir: "src",
   css: [
     '~/assets/css/aprycot.min.css?v=1.0.0',
     '~/assets/css/core/libs.min.css'
