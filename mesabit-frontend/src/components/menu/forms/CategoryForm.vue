@@ -92,6 +92,7 @@ const { setErrors, errors, meta, validate, resetForm } = useForm({
     name: string().required().max(50).label("Name"),
   })
 });
+
 watch(() => props.category, (newVal) => {
   setForm();  
 }, {
@@ -156,11 +157,11 @@ const createCategory = async (category) => {
     isSubmitting.value = true
     const res = await useCreateCategory(category);
     isSubmitting.value = false
-    toast.success("Cateogry Created Successfully!")
+    toast.success("Category Created Successfully!")
     return navigateTo("/menu")
   } catch (error) {
     isSubmitting.value = false
-    toast.error("Failed to create cateogry!")
+    toast.error("Failed to create Category!")
   }
 }
 
@@ -169,13 +170,13 @@ const updateCategory = async (id, category) => {
     isSubmitting.value = true
     const res = await useUpdateCategory(id, category);
     isSubmitting.value = false
-    toast.success("Cateogry Updated Successfully!")
+    toast.success("Category Updated Successfully!")
     return navigateTo("/menu")
   } catch (error) {
     console.log(error);
     
     isSubmitting.value = false
-    toast.error("Failed to update cateogry!")
+    toast.error("Failed to update Category!")
   }
 }
 
