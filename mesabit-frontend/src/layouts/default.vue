@@ -101,13 +101,13 @@
                   <a class="nav-link py-0 d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="~/assets/images/avatars/01.png" alt="User-Profile" class="img-fluid avatar avatar-50 avatar-rounded">
                     <div class="caption ms-3 d-none d-md-block ">
-                        <h6 class="mb-0 caption-title">Austin Robertson</h6>
+                        <h6 class="mb-0 caption-title">{{ userStore.user.first_name }} {{ userStore.user.last_name }}</h6>
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#">Profile</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Logout</a></li>
+                    <li><a class="dropdown-item" href="#" @click="onLogout">Logout</a></li>
                   </ul>
                 </li>
               </ul>
@@ -121,6 +121,11 @@
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+const userStore = useUserStore();
+
+</script>
 
 <style scoped>
 .z-n1 {

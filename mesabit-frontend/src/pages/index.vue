@@ -39,6 +39,12 @@
   </div>
 </template>
 
+<script setup lang="ts">
+definePageMeta({
+  middleware: ["auth"]
+})
+</script>
+
 <style scoped>
 .opacity-white {
   background: rgba(255, 255, 255, 0.84);

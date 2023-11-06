@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
-  srcDir: "src",
+  srcDir: 'src',
   css: [
     '~/assets/css/aprycot.min.css?v=1.0.0',
     '~/assets/css/core/libs.min.css'
@@ -26,4 +26,8 @@ export default defineNuxtConfig({
       ],
     },
   },
+  modules: [
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
+  ],
 })
