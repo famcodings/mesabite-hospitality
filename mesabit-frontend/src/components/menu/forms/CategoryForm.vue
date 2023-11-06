@@ -61,9 +61,19 @@
 </template>
 
 <script setup lang="ts">
+import type { Folder } from '~/types/folder'
 import { useForm } from "vee-validate";
 import { string, object } from "yup";
 
+const props = defineProps({
+  category: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+const toast = useToast();
+const userStore = useUserStore();
 const blankCategory = {
   id: null,
   name: null,
@@ -73,23 +83,100 @@ const blankCategory = {
 };
 const form = ref({...blankCategory})
 const isSubmitting = ref(false);
-const categoryFolders = ref([{id: 23, name: 'Salad'}, {id: 323, name: 'Drinks'}]);
 const isFetchingCategoryFolders = ref(false);
-
+const defaultCategoryFolders = ref([{id: 0, name: "No Folder"}])
+const categoryFolders = ref<Folder[]>([])
 
 const { setErrors, errors, meta, validate, resetForm } = useForm({
   validationSchema: object().shape({
     name: string().required().max(50).label("Name"),
   })
 });
+watch(() => props.category, (newVal) => {
+  setForm();  
+}, {
+  deep: true
+});
 
+onMounted(() => {
+  fetchFolders()
+  setForm();
+});
 
-async function handleSave() {
+const setForm = () => {
+  if (props.category?.id) {
+    resetForm({values: props.category})
+    form.value.id = props.category.id;
+    form.value.name = props.category.name;
+    form.value.description = props.category.description;
+    form.value.folderId = props.category.folderId;
+    form.value.image = props.category.image;
+  }
+}
+
+const fetchFolders = async () => {
+  isFetchingCategoryFolders.value = true
+  try {
+    const res = await useGetFolders();
+    categoryFolders.value = res.data.results.length ? res.data.results : defaultCategoryFolders.value
+    isFetchingCategoryFolders.value = false
+  } catch (error) {
+    toast.error("Failed to fetch category folders.")
+    isFetchingCategoryFolders.value = true
+  }
+}
+
+const handleSave = async () => {
   const { valid } = await validate();
   if (!valid) {
     return;
   }
-  isSubmitting.value = true
+  const formData = new FormData();
+  formData.append("name", form.value.name);
+  formData.append("description", form.value.description);
+  if (form.value.folderId) {
+    formData.append("folder", form.value.folderId);
+  }
+  if (form.value.image !== props.category.image) {
+    if (!form.value.image) {
+      formData.append('image', new File([], ''));
+    } else {
+      formData.append("image", form.value.image);
+    }
+  }
+  if (form.value.id) {
+    updateCategory(form.value.id, formData)
+  } else {
+    createCategory(formData)
+  }
+}
+
+const createCategory = async (category) => {
+  try {
+    isSubmitting.value = true
+    const res = await useCreateCategory(category);
+    isSubmitting.value = false
+    toast.success("Cateogry Created Successfully!")
+    return navigateTo("/menu")
+  } catch (error) {
+    isSubmitting.value = false
+    toast.error("Failed to create cateogry!")
+  }
+}
+
+const updateCategory = async (id, category) => {
+  try {
+    isSubmitting.value = true
+    const res = await useUpdateCategory(id, category);
+    isSubmitting.value = false
+    toast.success("Cateogry Updated Successfully!")
+    return navigateTo("/menu")
+  } catch (error) {
+    console.log(error);
+    
+    isSubmitting.value = false
+    toast.error("Failed to update cateogry!")
+  }
 }
 
 </script>

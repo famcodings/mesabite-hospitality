@@ -56,7 +56,7 @@ const { setErrors, errors, meta, validate, resetForm } = useForm({
 });
 
 
-async function handleSave() {
+const handleSave = async () => {
   const { valid } = await validate();
   if (!valid) {
     return;

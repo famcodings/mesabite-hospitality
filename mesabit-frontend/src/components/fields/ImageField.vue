@@ -2,19 +2,19 @@
   <div>
     <label
       class="image-label rounded d-flex align-items-center justify-content-center flex-column"
-      :class="[selectedImage && 'border', fieldErrors.length && 'border-danger']"
-      :style="{ backgroundImage: `url(${selectedImage})` }"
+      :class="[preview && 'border', fieldErrors.length && 'border-danger']"
+      :style="{ backgroundImage: `url(${preview})` }"
       @dragover.prevent
       @dragenter.prevent
       @dragleave.prevent
       @drop="handleDrop"
     >
-      <i v-if="!selectedImage" class="bi bi-upload fs-1"></i>
-      <span v-if="!selectedImage">Drag or click here to upload an image</span>
-      <span v-if="!selectedImage && !required">(Optional)</span>
+      <i v-if="!preview" class="bi bi-upload fs-1"></i>
+      <span v-if="!preview">Drag or click here to upload an image</span>
+      <span v-if="!preview && !required">(Optional)</span>
       <input type="file" accept="image/*" @change="handleFileSelect" ref="fileInput" class="d-none" />
       <button
-        v-if="selectedImage"
+        v-if="preview"
         @click.prevent="clearImage"
         class="btn btn-icon btn-lg clear-image fs-3"
       >
@@ -47,7 +47,7 @@ const props = defineProps({
     default: false
   },
   modelValue: {
-    type: String,
+    type: [File, String],
     default: "",
   },
 });
@@ -55,27 +55,26 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const selectedImage = ref(props.modelValue);
+const preview = ref(null);
 
 const { errors: fieldErrors, setErrors, handleChange } = useField(props.name);
 
-watch(props, (newProps) => {
-  if (newProps.modelValue !== selectedImage.value) {
-    selectedImage.value = newProps.modelValue;
-  }
+watch(() => props.modelValue, (newValue) => {
+  loadPreview(newValue, true)
 });
 
 const handleDrop = (event) => {
   event.preventDefault();
   const file = event.dataTransfer.files[0];
-  loadImage(file);
+  handleFile(file);
 };
 
 const handleFileSelect = (event) => {
   const file = event.target.files[0];
-  loadImage(file);
+  handleFile(file);
 };
 
-const loadImage = (file) => {
+const handleFile = (file) => {
   if (!file) {
     if (props.required && !selectedImage.value) {
       setErrors(['Please upload an image.'])
@@ -83,20 +82,33 @@ const loadImage = (file) => {
     return;
   }
   if (file.type.startsWith('image/')) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      selectedImage.value = reader.result;
-      emit('update:modelValue', selectedImage.value); // Emit the updated modelValue to the parent component
-      handleChange(selectedImage.value)
-    };
-    reader.readAsDataURL(file);
+    emit('update:modelValue', file); // Emit the updated modelValue to the parent component
+    handleChange(file)
+    loadPreview(file)
   } else {
     alert('Please select a valid image file.');
   }
 };
 
+const loadPreview = (object, url=false) => {
+  if (!object) {
+    preview.value = null
+    return
+  }
+  if (url) {
+    preview.value = object
+    return
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    preview.value = reader.result;
+  };
+  reader.readAsDataURL(object);
+}
+
 const clearImage = () => {
   selectedImage.value = null;
+  preview.value = null;
   emit('update:modelValue', null); // Emit the updated modelValue to the parent component
 };
 </script>

@@ -1,14 +1,18 @@
 <template>
-  <div class="card card-white dish-card profile-img mb-0 index border border-primary">
+  <div class="card card-white dish-card category-card profile-img mb-0 index border border-primary" :class="[category.image && 'has-image']">
     <div class="profile-img21">
-      <img :src="category.image" class="img-fluid rounded-pill avatar-170 blur-shadow position-bottom" alt="profile-image">
-      <img :src="category.image" class="img-fluid rounded-pill avatar-170 " alt="profile-image">
+      <img v-if="category.image" :src="category.image" class="img-fluid rounded-pill avatar-170 blur-shadow position-bottom" alt="profile-image">
+      <img v-if="category.image" :src="category.image" class="img-fluid rounded-pill avatar-170 " alt="profile-image">
     </div>
-    <div class="card-body menu-image">
-      <h5 class="heading-title fw-bolder mt-4 mb-0">{{ category.name }}</h5>
-      <p class="line-clamp">
-        {{ category.description }}
-      </p>
+    <div class="card-body menu-image rounded">
+      <div>
+        <h5 class="heading-title fw-bolder mb-1" :class="[category.image && 'mt-4']">
+          {{ category.name }}
+        </h5>
+        <p class="line-clamp" :class="[category.image && 'line-clamp-3', !category.image && 'line-clamp-6']">
+          {{ category.description }}
+        </p>
+      </div>
       <div class="d-flex flex-row-reverse align-items-center">
         <nuxt-link :to="`/menu/category/${category.id}`">
           <i class="bi bi-pencil"></i>
@@ -23,18 +27,34 @@
 
 <script setup lang="ts">
 
-defineProps({
+const props = defineProps({
   category: {
     type: Object,
     required: true
   }
 })
 
+
 </script>
 
 <style scoped>
-.dish-card {
-  margin-top: 6rem;
+.dish-card .menu-image {
+  margin-top: 0 !important;
+}
+.category-card {
+  margin-top: 75px;
+  height: calc(100% - 75px) !important;
+}
+
+.category-card .card-body {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.category-card.has-image .card-body {
+  padding-top: 100px;
 }
 
 .line-clamp {
@@ -43,6 +63,14 @@ defineProps({
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;  
   max-height: 5em;
+}
+.line-clamp-3 {
+  -webkit-line-clamp: 3;
+  max-height: 5em;
+}
+.line-clamp-6 {
+  -webkit-line-clamp: 6;
+    max-height: 10em;
 }
 i {
   border: 1px solid #EA6A12;

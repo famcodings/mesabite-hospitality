@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   srcDir: 'src',
   css: [
     '~/assets/css/aprycot.min.css?v=1.0.0',
-    '~/assets/css/core/libs.min.css'
+    '~/assets/css/core/libs.min.css',
+    'vue-toastification/dist/index.css'
   ],
   app: {
     head: {
@@ -30,4 +31,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
   ],
+  build:{
+    // vue-toastification - old commonjs module 
+    transpile: ['vue-toastification'],
+  }
 })

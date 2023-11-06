@@ -50,17 +50,11 @@
     </div>
 
     <div class="row">
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-        <MenuCategory :category="category" />
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-        <MenuCategory :category="category" />
-      </div>
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+      <div v-for="(category, index) in categories" :key="`category-${index}`" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
         <MenuCategory :category="category" />
       </div>
 
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 mt-md-6rem">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <MenuCreateCategoryButton />
       </div>
     </div>
@@ -69,9 +63,12 @@
 </template>
 
 <script setup lang="ts">
+import type { Category } from '~/types/category'
+
 definePageMeta({
   middleware: ["auth"]
 })
+const toast = useToast();
 
 const folder = {
   id: 12,
@@ -85,6 +82,25 @@ const category = {
   image: "/images/layouts/mashrum.jpg",
   description: 'Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce. Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce. Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce. Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce.',
   folder: 23,
+}
+
+const isFetchingCategories = ref(false)
+const categories = ref<Category[]>([])
+
+onMounted(() => {
+  fetchCategories()
+})
+
+const fetchCategories = async () => {
+  isFetchingCategories.value = true
+  try {
+    const res = await useGetCategories();
+    categories.value = res.data.results.length ? res.data.results : defaultCategoryFolders.value
+    isFetchingCategories.value = false
+  } catch (error) {
+    toast.error("Failed to fetch category folders.")
+    isFetchingCategories.value = true
+  }
 }
 
 </script>
