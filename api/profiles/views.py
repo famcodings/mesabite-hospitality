@@ -27,6 +27,14 @@ class Logout(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+class ProfileDetails(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        user_details = UserSerializer(request.user)
+        return Response(user_details.data, status=status.HTTP_200_OK)
+
+
 class UpdateProfileView(generics.GenericAPIView):
 
     serializer_class = UserSerializer
