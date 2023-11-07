@@ -72,6 +72,7 @@ const props = defineProps({
   }
 })
 
+const route = useRoute()
 const toast = useToast();
 const userStore = useUserStore();
 const blankCategory = {
@@ -100,7 +101,12 @@ watch(() => props.category, (newVal) => {
 });
 
 onMounted(() => {
-  fetchFolders()
+  fetchFolders().then(() => {
+    if (Object.prototype.hasOwnProperty.call(route.query, 'folder')) {
+      const folderId = route.query.folder
+      form.value.folderId = folderId
+    }
+  })
   setForm();
 });
 
