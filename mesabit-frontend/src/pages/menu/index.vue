@@ -26,13 +26,19 @@
 
     <div class="row mb-3">
       <div class="col-md-12 col-lg-12 mb-3">
-        <input class="form-control form-control-lg" type="text" placeholder="Search Category">
+        <input v-model.trim="search" class="form-control form-control-lg" type="text" placeholder="Search Category" @input="handleSearchInput">
       </div>
     </div>
 
-    <nuxt-link class="btn btn-text text-primary" to="/menu/create-category-folder">
-      <i class="bi bi-folder-plus"></i> Create Category Folder
-    </nuxt-link>
+    <div class="d-flex">
+      <nuxt-link class="btn btn-text text-primary" to="/menu/create-category-folder">
+        <i class="bi bi-folder-plus"></i> Create Category Folder
+      </nuxt-link>
+
+      <nuxt-link class="btn btn-text text-primary" to="/menu/create-category">
+        <i class="bi bi-bookmark-plus"></i> Create Category
+      </nuxt-link>
+    </div>
 
     <div class="row  mt-3">
       <div v-for="(folder, index) in categoryFolders" :key="`folder-${index}`" class="col-12 mb-3">
@@ -49,6 +55,9 @@
       </div>
     </div>
 
+    <!-- End of Folders -->
+    <p class="text-center"><i class="bi bi-dot end-of-folders fs-1"></i></p>
+
     <div class="row">
       <div v-for="(category, index) in categories" :key="`category-${index}`" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
         <MenuCategory :category="category" @deleted="handleCategoryDeleted" />
@@ -59,6 +68,11 @@
       </div>
     </div>
 
+    <!-- Loading indicator -->
+    <!-- <div v-if="isFetchingCategories || isFetchingCategoryFolders" class="loading-indicator">Loading...</div> -->
+
+    <!-- End of Categories -->
+    <p class="text-center"><i class="bi bi-dot end-of-categories fs-1"></i></p>
   </div>
 </template>
 
@@ -70,40 +84,91 @@ definePageMeta({
   middleware: ["auth"]
 })
 const toast = useToast();
+const timer = ref(null);
 
 const isFetchingCategories = ref(false)
 const isFetchingCategoryFolders = ref(false)
+const isCategoriesReachedEnd = ref(false)
+const isCategoryFoldersReachedEnd = ref(false)
 const categories = ref<Category[]>([])
 const categoryFolders = ref<Folder[]>([])
+const search = ref("")
+const foldersPage = ref(1)
+const categoriesPage = ref(1)
 
 onMounted(() => {
-  fetchFolders()
-  fetchCategories()
+  loadMoreFolders()
+  loadMoreCategories()
+
+  const endOfFoldersObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      loadMoreFolders()
+    }
+  }, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.2,
+  });
+
+  const endOfCategoriesObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      loadMoreCategories()
+    }
+  }, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.2,
+  });
+  
+  endOfFoldersObserver.observe(document.querySelector('.end-of-folders'));
+  endOfCategoriesObserver.observe(document.querySelector('.end-of-categories'));
+
+  onUnmounted(() => {
+    endOfFoldersObserver.disconnect();
+    endOfCategoriesObserver.disconnect();
+  });
 })
 
-const fetchFolders = async () => {
-  isFetchingCategoryFolders.value = true
-  try {
-    const res = await useGetFolders();
-    categoryFolders.value = res.data.results
-    isFetchingCategoryFolders.value = false
-  } catch (error) {
-    toast.error("Failed to fetch category folders.")
-    isFetchingCategoryFolders.value = true
-  }
-}
+const loadMoreFolders = async () => {
+  if (isFetchingCategoryFolders.value || isCategoryFoldersReachedEnd.value) return;
+  isFetchingCategoryFolders.value = true;
 
-const fetchCategories = async () => {
-  isFetchingCategories.value = true
   try {
-    const res = await useGetCategories();
-    categories.value = res.data.results 
-    isFetchingCategories.value = false
+    const res = await useGetFolders({page: foldersPage.value});
+    categoryFolders.value = [...categoryFolders.value, ...res.data.results];
+    if (res.data.next) {
+      foldersPage.value++;
+    } else {
+      isCategoryFoldersReachedEnd.value = true;
+    }
+    isFetchingCategoryFolders.value = false;
   } catch (error) {
-    toast.error("Failed to fetch categories.")
-    isFetchingCategories.value = true
+    isFetchingCategoryFolders.value = false;
+    toast.error("Failed to fetch category folders.")
   }
-}
+};
+
+const loadMoreCategories = async () => {
+  if (isFetchingCategories.value || isCategoriesReachedEnd.value) return;
+  isFetchingCategories.value = true;
+
+  try {
+    const res = await useGetCategories({
+      folder__isnull: true,
+      page: categoriesPage.value,
+    });
+    categories.value = [...categories.value, ...res.data.results];
+    if (res.data.next) {
+      categoriesPage.value++;
+    } else {
+      isCategoriesReachedEnd.value = true;
+    }
+    isFetchingCategories.value = false;
+  } catch (error) {
+    isFetchingCategories.value = false;
+    toast.error("Failed to fetch categories.")
+  }
+};
 
 const handleFolderDeleted = (idToRemove) => {
   categoryFolders.value = categoryFolders.value.filter(item => item.id != idToRemove)
@@ -112,6 +177,37 @@ const handleFolderDeleted = (idToRemove) => {
 const handleCategoryDeleted = (idToRemove) => {
   categories.value = categories.value.filter(item => item.id != idToRemove)
 }
+
+const debouncedSearch = async (searchValue) => {
+  if (!searchValue) {
+    fetchFolders()
+    fetchCategories()
+    return
+  }
+  isFetchingCategories.value = true
+  try {
+    const res = await useGetCategories({
+      search: searchValue
+    });
+    categories.value = res.data.results.categories 
+    categoryFolders.value = res.data.results.folders 
+    isFetchingCategories.value = false
+  } catch (error) {
+    toast.error("Failed to fetch categories.")
+    isFetchingCategories.value = true
+  }
+}
+
+const handleSearchInput = () => {
+  if (timer.value) {
+    clearTimeout(timer.value);
+  }
+  
+  timer.value = setTimeout(() => {
+    debouncedSearch(search.value);
+  }, 400);
+}
+
 </script>
 
 <style scoped>
@@ -120,4 +216,11 @@ const handleCategoryDeleted = (idToRemove) => {
     margin-top: 6rem;
   }
 }
+
+@media (max-width: 767px) {
+  .hero-image::before {
+    width: 100%;
+  }
+}
+
 </style>

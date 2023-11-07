@@ -25,7 +25,12 @@ class CategoryViewset(GenericAuthenticatedRestMixin, ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
     model = Category
-    exclude_filter_fields = {'image'}
+
+    filterset_fields = {
+        'id': ["exact", "in"],
+        'name': ["exact", "in"],
+        'folder': ["exact", "isnull"],
+    }
     
     def list(self, request, *args, **kwargs):
         search_term = self.request.query_params.get('search')
@@ -34,7 +39,7 @@ class CategoryViewset(GenericAuthenticatedRestMixin, ModelViewSet):
             categories_queryset = self.filter_queryset(self.get_queryset()).select_related('folder')
            
             # Group Searched Categories based on folders
-            folders, categories = group_categories_based_on_folder(categories_queryset)
+            folders, categories = group_categories_based_on_folder(request, categories_queryset)
             
             response.data['results'] = dict()
             response.data['results']['folders'] = folders

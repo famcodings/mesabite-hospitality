@@ -23,10 +23,10 @@ export const useGetFolder = async (id: string) => {
 }
 
 
-export const useGetFolders = async () => {
+export const useGetFolders = async (query: {} = {}) => {
   const axios = useAxios()
   const endpoint = '/menus/api/folders/'
-  return await axios.get(endpoint)
+  return await axios.get(endpoint, { params: query })
 }
 
 

@@ -140,7 +140,9 @@ const handleSave = async () => {
   }
   const formData = new FormData();
   formData.append("name", form.value.name);
-  formData.append("description", form.value.description);
+  if (form.value.description.trim()) {
+    formData.append("description", form.value.description.trim());
+  }
   if (form.value.folderId) {
     formData.append("folder", form.value.folderId);
   }
@@ -159,6 +161,7 @@ const handleSave = async () => {
 }
 
 const createCategory = async (category) => {
+  console.log(category);
   try {
     isSubmitting.value = true
     const res = await useCreateCategory(category);
