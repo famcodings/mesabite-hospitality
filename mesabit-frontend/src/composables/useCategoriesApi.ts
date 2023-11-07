@@ -27,3 +27,10 @@ export const useGetCategory = async (id: string) => {
   const endpoint = `/menus/api/categories/${id}`
   return await axios.get(endpoint)
 }
+
+
+export const useDeleteCategory = async (id: string) => {
+  const axios = useAxios()
+  const endpoint = `/menus/api/categories/${id}`
+  return await axios.delete(endpoint)
+}

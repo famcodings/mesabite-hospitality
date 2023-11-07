@@ -17,8 +17,11 @@
         <nuxt-link :to="`/menu/category/${category.id}`">
           <i class="bi bi-pencil"></i>
         </nuxt-link>
-        <button class="btn btn-icon">
-          <i class="bi bi-trash"></i>
+        <button class="btn btn-icon" :disabled="isDeletingCategory" @click="handleDelete">
+          <div v-if="isDeletingCategory" class="spinner-border spinner-border-sm text-primary me-1" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <i v-else class="bi bi-trash"></i>
         </button>
       </div>
     </div>
@@ -34,6 +37,30 @@ const props = defineProps({
   }
 })
 
+const toast = useToast()
+const isDeletingCategory = ref(false)
+
+const emit = defineEmits(['deleted'])
+
+const handleDelete = async () => {
+  if (!confirm(`Are you sure you want to delete category #${props.category.id}?`)) {
+    return
+  }
+  isDeletingCategory.value = true
+  try {
+    await useDeleteCategory(props.category.id)
+    isDeletingCategory.value = false
+    console.log("emit", props.category.id);
+    
+    emit("deleted", props.category.id)
+    toast.success("Category deleted!")
+  } catch (error) {
+    console.log(error);
+    isDeletingCategory.value = false
+    toast.error("Failed to delete category!")
+  }
+
+}
 
 </script>
 

@@ -35,14 +35,14 @@
     </nuxt-link>
 
     <div class="row  mt-3">
-      <div class="col-12 mb-3">
-        <MenuCategoryFolder :folder="folder">
+      <div v-for="(folder, index) in categoryFolders" :key="`folder-${index}`" class="col-12 mb-3">
+        <MenuCategoryFolder :folder="folder" @deleted="handleFolderDeleted">
           <div class="row">
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-              <MenuCategory :category="category" />
+            <div v-for="(category, index1) in folder.categories" :key="`folder-${index}-category-${index1}`" class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <MenuCategory :category="category" @deleted="handleCategoryDeleted" />
             </div>
             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-              <MenuCategory :category="category" />
+              <MenuCreateCategoryButton :folder-id="folder.id" />
             </div>
           </div>
         </MenuCategoryFolder>
@@ -51,7 +51,7 @@
 
     <div class="row">
       <div v-for="(category, index) in categories" :key="`category-${index}`" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-        <MenuCategory :category="category" />
+        <MenuCategory :category="category" @deleted="handleCategoryDeleted" />
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
@@ -63,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Folder } from '~/types/folder'
 import type { Category } from '~/types/category'
 
 definePageMeta({
@@ -85,24 +86,46 @@ const category = {
 }
 
 const isFetchingCategories = ref(false)
+const isFetchingCategoryFolders = ref(false)
 const categories = ref<Category[]>([])
+const categoryFolders = ref<Folder[]>([])
 
 onMounted(() => {
+  fetchFolders()
   fetchCategories()
 })
+
+const fetchFolders = async () => {
+  isFetchingCategoryFolders.value = true
+  try {
+    const res = await useGetFolders();
+    categoryFolders.value = res.data.results
+    isFetchingCategoryFolders.value = false
+  } catch (error) {
+    toast.error("Failed to fetch category folders.")
+    isFetchingCategoryFolders.value = true
+  }
+}
 
 const fetchCategories = async () => {
   isFetchingCategories.value = true
   try {
     const res = await useGetCategories();
-    categories.value = res.data.results.length ? res.data.results : defaultCategoryFolders.value
+    categories.value = res.data.results 
     isFetchingCategories.value = false
   } catch (error) {
-    toast.error("Failed to fetch category folders.")
+    toast.error("Failed to fetch categories.")
     isFetchingCategories.value = true
   }
 }
 
+const handleFolderDeleted = (idToRemove) => {
+  categoryFolders.value = categoryFolders.value.filter(item => item.id != idToRemove)
+}
+
+const handleCategoryDeleted = (idToRemove) => {
+  categories.value = categories.value.filter(item => item.id != idToRemove)
+}
 </script>
 
 <style scoped>
