@@ -110,7 +110,7 @@ const setForm = () => {
     form.value.id = props.category.id;
     form.value.name = props.category.name;
     form.value.description = props.category.description;
-    form.value.folderId = props.category.folderId;
+    form.value.folderId = props.category.folder;
     form.value.image = props.category.image;
   }
 }
