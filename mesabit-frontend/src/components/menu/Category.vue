@@ -14,7 +14,7 @@
         </p>
       </div>
       <div class="d-flex flex-row-reverse align-items-center">
-        <nuxt-link :to="`/menu/category/${category.id}`">
+        <nuxt-link :to="`/menu/category/${category.id}/edit`">
           <i class="bi bi-pencil"></i>
         </nuxt-link>
         <button class="btn btn-icon" :disabled="isDeletingCategory" @click="handleDelete">
