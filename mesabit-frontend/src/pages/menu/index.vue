@@ -71,20 +71,6 @@ definePageMeta({
 })
 const toast = useToast();
 
-const folder = {
-  id: 12,
-  name: "Salad",
-  image: "/images/layouts/salad.jpg"
-}
-
-const category = {
-  id: 13,
-  name: 'Mushroom',
-  image: "/images/layouts/mashrum.jpg",
-  description: 'Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce. Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce. Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce. Indulge in a savory mushroom dish that harmoniously combines earthy flavors with a hint of umami. Our mushroom creation features tender, sautéed mushrooms, delicately seasoned to perfection, and served with a side of buttery garlic sauce.',
-  folder: 23,
-}
-
 const isFetchingCategories = ref(false)
 const isFetchingCategoryFolders = ref(false)
 const categories = ref<Category[]>([])
