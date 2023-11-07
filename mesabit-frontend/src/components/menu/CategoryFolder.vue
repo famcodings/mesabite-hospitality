@@ -43,7 +43,6 @@ const handleDelete = async () => {
   try {
     await useDeleteFolder(props.folder.id)
     isDeletingFolder.value = false
-    console.log("emit", props.folder.id);
     
     emit("deleted", props.folder.id)
     toast.success("Folder deleted!")
