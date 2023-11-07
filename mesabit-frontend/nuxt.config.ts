@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   css: [
     '~/assets/css/aprycot.min.css?v=1.0.0',
     '~/assets/css/core/libs.min.css',
-    'vue-toastification/dist/index.css'
+    // 'vue-toastification/dist/index.css'
   ],
   app: {
     head: {

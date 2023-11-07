@@ -50,7 +50,6 @@ const handleDelete = async () => {
   try {
     await useDeleteCategory(props.category.id)
     isDeletingCategory.value = false
-    console.log("emit", props.category.id);
     
     emit("deleted", props.category.id)
     toast.success("Category deleted!")

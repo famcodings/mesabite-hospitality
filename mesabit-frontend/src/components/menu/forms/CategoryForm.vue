@@ -161,7 +161,6 @@ const handleSave = async () => {
 }
 
 const createCategory = async (category) => {
-  console.log(category);
   try {
     isSubmitting.value = true
     const res = await useCreateCategory(category);
