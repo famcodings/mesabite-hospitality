@@ -6,7 +6,7 @@ Technology Stacks:
  1. Django / Django Rest Framework (DRF)
  1. Nuxt3 (Typescript)
 
-Why this stack? Read Here
+Why this stack? [Read Here](https://github.com/famcodings/mesabite-hospitality/tree/main#why-this-stack)
 
 ## Local Setup Guide
 
