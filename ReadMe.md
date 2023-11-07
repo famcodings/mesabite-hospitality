@@ -10,35 +10,28 @@ Why this stack? [Read Here](https://github.com/famcodings/mesabite-hospitality/t
 
 ## Local Setup Guide
 
+### Prerequisites
+- python 3.9.6
+- virtualenv 20.19.0
+- node 18.13.0
+
 ### Backend (Django)
-- Clone repository : `git clone https://github.com/famcodings/django_rest_reference_architecture.git`
-- On main branch we are using django-rest-swagger, in order to use drf-spectacular switch to drf-spectacular-integration branch: `git checkout drf-spectacular-integration`
-- Create and activate virtual environment: `pipenv shell`
-- Install dependencies: `pipenv install`
-- Copy .env.example in same directory and rename it as ".env" and write database and email credentials in ".env"
-- Search and replace project_name with the required name of the project
+- Clone repository : `git clone https://github.com/famcodings/mesabite-hospitality.git`
+- Create virtual environment: `virtualenv venv`
+- Activate virtual environment: `source venv/bin/activate`
+- Install dependencies: `pip install -r requirements.txt`
 - Migrate DB : `python manage.py migrate`
 - Runserver : `python manage.py runserver`
-- Navigate to url: `localhost:8000/swagger`
+- Navigate to Testing Swagger URL: `localhost:8000/swagger`
+- Navigate to API Docs URL: `localhost:8000/redoc`
 
 ## Features
-- Login API
-- Logout API
-- SignUp API
-- Update Profile API
-- Change Password API
-- Reset Password APIs
-
-## Swagger Staticfiles Error
-- If you face any error in swagger related to staticfiles perform following steps to resolve it
-    1. Open terminal activate virtual envirnment and run command: `pipenv --venv`.
-    1. It will show the path to your virtual env directory as output. Navigate to this path.
-    1. Go to: `/Lib/site-packages/rest_framework_swagger/templates/rest_framework_swagger`.
-    1. Open `base.html` file in your favorite editor.
-    1. Find and replace `{% load staticfiles %}` with `{% load static %}`. (Usually written at the top of the file).
-    1. Save the file and restrart the server if not already running and reload the page.
-- For more information related to this issue visit: `https://github.com/marcgibbons/django-rest-swagger/issues/832s`
-
+- Login
+- Logout
+- SignUp
+- Folders CRUD
+- Categories CRUD
+- Search and Filter Categories
 
 ### Frontend (Nuxt3)
 
