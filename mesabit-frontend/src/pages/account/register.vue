@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex justify-content-center mb-0">
     <div class="card-body mt-5">
-        <img src="~/assets/images/favicon.png" class="img-fluid logo-img" alt="img5">
+        <img src="~/assets/images/favicon.png" class="img-fluid logo-img" style="height: auto;" alt="img5">
         <h2 class="mb-2 text-center">Register</h2>
         <p class="text-center">Create your account.</p>
         <form @submit.prevent="submitRegistrationForm">

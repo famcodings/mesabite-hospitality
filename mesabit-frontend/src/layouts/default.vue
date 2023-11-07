@@ -13,10 +13,10 @@
             <a href="/" class="navbar-brand">
                 <!--Logo start-->
                 <div class="logo">
-                  <img src="~/assets/images/logo.svg">
+                  <img src="~/assets/images/logo.png" style="width: 55px;">
                 </div>
                 <div class="logo-hover">
-                    <img src="~/assets/images/favicon.png" class="img-fluid logo-img" alt="img4">
+                    <img src="~/assets/images/favicon.png" class="img-fluid logo-img" style="height: auto;" alt="img4">
                 </div>
                 <!--logo End-->
             </a>
@@ -76,7 +76,7 @@
                   <img src="~/assets/images/logo.svg">
                 </div>
                 <div class="logo-hover">
-                    <img src="~/assets/images/favicon.png" class="img-fluid logo-img" alt="img4">
+                    <img src="~/assets/images/favicon.png" class="img-fluid logo-img" style="height: auto;" alt="img4">
                 </div>
                 <!--logo End-->
             </a>

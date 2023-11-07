@@ -1,6 +1,6 @@
 <template>
   <div class="card-body">
-    <img src="~/assets/images/favicon.png" class="img-fluid logo-img" alt="img4">
+    <img src="~/assets/images/favicon.png" class="img-fluid logo-img" style="height: auto;" alt="img4">
     <h2 class="mb-2 text-center">Login</h2>
     <p class="text-center">Sign in to stay connected.</p>
     <form @submit.prevent="submitLoginForm">
